@@ -18,14 +18,14 @@ module ActsRateable
             "((SELECT COUNT(*) from ar_rates WHERE author_type = '#{author.class.base_class.name}') / (SELECT COUNT(DISTINCT author_id) FROM ar_rates WHERE author_type = '#{author.class.base_class.name}')) avg_num_ratings "+
             "FROM ar_rates WHERE author_type = '#{author.class.base_class.name}'"
       #  RETURNS = { "total_ratings"=>"", "rating_sum"=>"", "rating_avg"=>"", "rated_count"=>"", "avg_num_ratings"=>"" }
-      ActsRateable::Rate.connection.execute(sql).first
+      ActsRateable::Rate.connection.exec_query(sql).first
     end
 
     def self.values_for(author)    
       sql =   "SELECT COUNT(*) total_ratings, COALESCE(SUM(value),0) rating_sum, COALESCE(AVG(value),0) rating_avg "+
               "FROM ar_rates WHERE author_type = '#{author.class.base_class.name}' and author_id = '#{author.id}'"
       # RETURNS = {"total_ratings"=>"", "rating_sum"=>"", "rating_avg"=>""}
-      ActsRateable::Rate.connection.execute(sql).first
+      ActsRateable::Rate.connection.exec_query(sql).first
     end
 
     def self.data_for(author)

@@ -18,14 +18,14 @@ module ActsRateable
             "(SELECT COUNT(DISTINCT resource_id) FROM ar_rates WHERE resource_type = '#{resource.class.base_class.name}') rated_count, "+
             "((SELECT COUNT(*) from ar_rates WHERE resource_type = '#{resource.class.base_class.name}') / (SELECT COUNT(DISTINCT resource_id) FROM ar_rates WHERE resource_type = '#{resource.class.base_class.name}')) avg_num_ratings "+
             "FROM ar_rates WHERE resource_type = '#{resource.class.base_class.name}'"
-      ActsRateable::Rate.connection.execute(sql).first
+      ActsRateable::Rate.connection.exec_query(sql).first
     end
 
     # RETURNS = {"total_ratings"=>"", "rating_sum"=>"", "rating_avg"=>""}
     def self.values_for(resource)    
       sql =   "SELECT COUNT(*) total_ratings, COALESCE(SUM(value),0) rating_sum, COALESCE(AVG(value),0) rating_avg "+
               "FROM ar_rates WHERE resource_type = '#{resource.class.base_class.name}' and resource_id = '#{resource.id}'"
-      ActsRateable::Rate.connection.execute(sql).first
+      ActsRateable::Rate.connection.exec_query(sql).first
     end
 
     def self.data_for(resource)

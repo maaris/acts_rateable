@@ -5,7 +5,6 @@ module ActsRateable
   end
 
   module ClassMethods
-    
     def acts_rateable(options = {})
       if (Rails::VERSION::STRING.to_f >= 4)
         has_many :rates, ->(obj) { where(resource_type: obj.class.base_class.name) }, class_name: ActsRateable::Rate, foreign_key: :resource_id, dependent: :destroy
@@ -31,7 +30,9 @@ module ActsRateable
         ActsRateable::Rating.where({resource_id: self.id, resource_type: self.class.base_class.name }).first_or_initialize.save
         ActsRateable::Count.where({resource_id: self.id, resource_type: self.class.base_class.name }).first_or_initialize.save
       end
-      
+
+      delegate :total, :average, :sum, :estimate, to: :rating, prefix: true
+
       include LocalInstanceMethods
     end
   end
